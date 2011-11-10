@@ -10,21 +10,20 @@ app.configure(function(){
     app.use(express.bodyParser());
     app.use(express.cookieParser());
     app.use(express.methodOverride());
+    app.dynamicHelpers({ config : config });
     app.use(express.session({ store : store, secret: 'string', cookie: { httpOnly: false } }));
 });
 app.get('/:user_id/display', function(req, res){
     res.render('display.jade', {
         locals : { 
-            user_id : req.params.user_id,
-            config : config
+            user_id : req.params.user_id
         }
     });
 });
 app.get('/:user_id/controller', function(req, res){
     res.render('controller.jade', {
         locals : { 
-            user_id : req.params.user_id,
-            config : config
+            user_id : req.params.user_id
         }
     });
 });
