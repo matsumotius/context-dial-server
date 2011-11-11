@@ -1,10 +1,12 @@
+var CDS = {};
 $(function(){
     // controller
     var log = function(message){ $('#log').text(message) };
-    var user_id = $('#user_id').text();
+    CDS.user_id = $('#user_id').text();
+    CDS.host = $('#host').text();
     // socket
-    var socket = io.connect('http://myatsumoto.com:3000/');
-    socket.emit('join', { type : 'controller', id : user_id });
+    var socket = io.connect(CDS.host);
+    socket.emit('join', { type : 'controller', id : CDS.user_id });
     socket.on('message', function(message){ log(message); });
     socket.on('change', function(message){
         context_dial.set_value(message.key, message.value);

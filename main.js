@@ -56,6 +56,7 @@ io.sockets.on('connection', function (socket){
             socket.join(message.type+'-'+message.id);
             socket.set('name', message.type+'-'+message.id, function(){
                 socket.emit('message', 'success');
+                io.sockets.in(reverse(message.type)+'-'+message.id).emit('join');
             });
         }
     });

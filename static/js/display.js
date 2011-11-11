@@ -1,4 +1,5 @@
 var onYouTubePlayerAPIReady;
+var CDS = {};
 $(function(){
     // display dom
     var container = $('<div id="content" />').css('width', '100%');
@@ -9,11 +10,17 @@ $(function(){
     $('body').append('<div id="comment" />');
     $('body').append('<div id="log" />');
     var log = function(message){ $('#log').text(message) };
-    var user_id = $('#user_id').text();
+    CDS.user_id = $('#user_id').text();
+    CDS.host= $('#host').text();
     // socket
-    var socket = io.connect('http://myatsumoto.com:3000/');
-    socket.emit('join', { type : 'display', id : user_id });
+    var socket = io.connect(CDS.host);
+    socket.emit('join', { type : 'display', id : CDS.user_id });
     socket.on('message', function(message){ log(message); });
+    socket.on('join', function(message){
+        var current_time = YouTube.player.getCurrentTime() / YouTube.player.getDuration();
+        socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
+        socket.emit('change', { key : 'time',  value : parseInt(current_time * 100) });
+    });
     socket.on('change', function(message){
         YouTube.change[message.key](message.value);
     });
