@@ -110,6 +110,7 @@ $(function(){
         },
         'root' : function(){
             YouTube.is_playing ? YouTube.player.pauseVideo() : YouTube.player.playVideo();
+            YouTube.is_playing = !YouTube.is_playing;
         }
     };
 });
