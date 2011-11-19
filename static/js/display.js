@@ -13,16 +13,23 @@ $(function(){
     cds.user_id = $('#user_id').text();
     cds.host= $('#host').text();
     cds.youtube_is_ready = false;
-    cds.sync = function(){
+    cds.sync_time = function(){
+        if(cds.youtube_is_ready == false) return;
         var current_time = YouTube.player.getCurrentTime() / YouTube.player.getDuration();
-        socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
         socket.emit('change', { key : 'time',  value : parseInt(current_time * 100) });
+    };
+    cds.sync_sound = function(){
+        if(cds.youtube_is_ready == false) return;
+        socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
     };
     // socket
     var socket = io.connect(cds.host);
     socket.emit('join', { type : 'display', id : cds.user_id });
     socket.on('message', function(message){ log(message); });
-    socket.on('join', function(message){ cds.sync(); });
+    socket.on('join', function(message){
+        cds.sync_sound();
+        cds.sync_time();
+    });
     socket.on('change', function(message){
         YouTube.change[message.key](message.value);
     });
@@ -40,7 +47,7 @@ $(function(){
             YouTube.player.playVideo();
             socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
         });
-        setInterval(function(){ cds.sync(); }, 1000);
+        setInterval(function(){ cds.sync_time(); }, 1000);
     };
     var create_player = function(video_id){
         YouTube.get_related(video_id);
