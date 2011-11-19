@@ -12,15 +12,17 @@ $(function(){
     var log = function(message){ $('#log').text(message) };
     cds.user_id = $('#user_id').text();
     cds.host= $('#host').text();
+    cds.youtube_is_ready = false;
+    cds.sync = function(){
+        var current_time = YouTube.player.getCurrentTime() / YouTube.player.getDuration();
+        socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
+        socket.emit('change', { key : 'time',  value : parseInt(current_time * 100) });
+    };
     // socket
     var socket = io.connect(cds.host);
     socket.emit('join', { type : 'display', id : cds.user_id });
     socket.on('message', function(message){ log(message); });
-    socket.on('join', function(message){
-        var current_time = YouTube.player.getCurrentTime() / YouTube.player.getDuration();
-        socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
-        socket.emit('change', { key : 'time',  value : parseInt(current_time * 100) });
-    });
+    socket.on('join', function(message){ cds.sync(); });
     socket.on('change', function(message){
         YouTube.change[message.key](message.value);
     });
@@ -32,11 +34,13 @@ $(function(){
     YouTube.relation = {};
     YouTube.comments = {};
     onYouTubePlayerAPIReady = function(){
+        cds.youtube_is_ready = true;
         YouTube.player = create_player('heXQfgEC3kk');
         YouTube.player.addEventListener('onReady', function(){
             YouTube.player.playVideo();
             socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
         });
+        setInterval(function(){ cds.sync(); }, 1000);
     };
     var create_player = function(video_id){
         YouTube.get_related(video_id);
