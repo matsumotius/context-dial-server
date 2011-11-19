@@ -3,7 +3,7 @@ var cds = {};
 $(function(){
     // display dom
     var container = $('<div id="content" />').css('width', '100%');
-    container.append($('<div id="showcase" />');
+    container.append($('<div id="showcase" />'));
     container.append($('<div id="player" />'));
     $('body').append(container);
     $('body').append('<br clear="all">');
