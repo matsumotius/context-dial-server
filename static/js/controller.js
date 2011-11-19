@@ -25,8 +25,6 @@ $(function(){
     context_dial.set_image('time', { url : '/image/media-player.png', width : 80, height : 80 });
     context_dial.set_image('video', { url : '/image/videos.png', width : 80, height : 80 });
     context_dial.on('change', function(context){
-        if(context.key in cds.context || Math.abs(cds.context[context.key] - context.value) < 1) return;
-        cds.context[context.key] = context.value;
         socket.emit('change', { key : context.key, value : parseInt(context.value) });
     });
     context_dial.on('touchend', function(context){
