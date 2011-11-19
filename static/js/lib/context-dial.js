@@ -66,19 +66,23 @@ $(function(){
         var mousedown = this.dial.is_smartphone ? 'touchstart' : 'mousedown';
         var mousemove = this.dial.is_smartphone ? 'touchmove'  : 'mousemove';
         var mouseup =   this.dial.is_smartphone ? 'touchend'   : 'mouseup';
+        var half_round = radian_from(180), round = radian_from(360);
+        var radian_from_90 = radian_from(90), radian_from_270 = radian_from(270);
         // todo: move to other block
         this.dial.on(mousemove, function(e){
+            this.count++;
+            if(this.count % 3 > 0) return;
+            this.count = 0;
             for(var key in that.list){
                 var context = that.list[key];
                 if(false === context.is_drugging) continue;
                 var old_radian = that.rail.get_radian({ x : context.en.x, y : context.en.y });
                 var new_radian = that.rail.get_radian({ x : e.pageX, y : e.pageY });
-                var half_round = radian_from(180), round = radian_from(360);
                 if(old_radian < 0) old_radian += round;
                 if(new_radian < 0) new_radian += round;
                 var radian_diff = old_radian - new_radian;
-                if(old_radian >= half_round && new_radian < radian_from(90))  radian_diff -= round;
-                if(old_radian <= half_round && new_radian > radian_from(270)) radian_diff += round;
+                if(old_radian >= half_round && new_radian < radian_from_90)  radian_diff -= round;
+                if(old_radian <= half_round && new_radian > radian_from_270) radian_diff += round;
                 context.value += context.value_by_rot * radian_diff / RADIAN_BY_ROT;
                 context.en.move(e.pageX, e.pageY);
                 context.adjust_value();

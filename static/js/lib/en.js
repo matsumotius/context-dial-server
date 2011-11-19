@@ -155,6 +155,8 @@ $(function(){
     EnManager.prototype.apply_events = function(target){
         var canvas_list = this.canvas_list;
         var ev_keys = this_is_smartphone ? EN_SMARTPHONE_EVENTS : EN_PC_EVENTS;
+        var touchmove = this_is_smartphone ? 'touchmove' : 'mousemove';
+        var touchend  = this_is_smartphone ? 'touchend'  : 'mousedown';
         $.each(ev_keys, function(index, en_event){
             $(target).bind(en_event, function(e){
                 var that = this;
@@ -172,12 +174,14 @@ $(function(){
                 var pageY = this_is_smartphone ? event.changedTouches[0].pageY : e.pageY;
                 var event_obj = this_is_smartphone ? event.changedTouches[0] : e;
                 var event_layer = -1;
-                var event_en_list = [];
                 $.each(en_list, function(index, en){
                     var distance = Math.pow(x + en.x - pageX, 2) + Math.pow(y + en.y - pageY, 2);
-                    if(distance <= Math.pow(en.radius, 2)) en.fire(en_event, event_obj);
-                    if(distance > Math.pow(en.radius, 2) || en.layer < event_layer) return;
-                    event_layer = en.layer;
+                    if(en_event == touchmove){
+                        if(distance > Math.pow(en.radius, 2)) return;
+                    } else {
+                        if(distance > Math.pow(en.radius, 2) || en.layer < event_layer) return;
+                        event_layer = en.layer;
+                    }
                     en.fire(en_event, event_obj);
                 });
             });
@@ -190,7 +194,7 @@ $(function(){
             this.apply_events(target);
         } else if('en_list' in this.canvas_list[canvas.index]){
             this.canvas_list[canvas.index].en_list.push(en); 
-            this.canvas_list[canvas.index].en_list.sort(function(a, b){ return a.layer - b.layer; });
+            this.canvas_list[canvas.index].en_list.sort(function(a, b){ return b.layer - a.layer; });
             this.refresh(this.canvas_list[canvas.index].target);
         } else { 
             this.canvas_list[canvas.index].en_list = [en]; 
@@ -234,7 +238,8 @@ $(function(){
     };
     EnManager.prototype.draw_all = function(target){
         var canvas = this.find(target);
-        $.each(canvas.target.en_list, function(en_index, en){ en.draw(); });
+        var en_list = canvas.target.en_list;
+        for(var i=en_list.length-1;i>=0;i--) en_list[i].draw();
     };
     var en_manager = new EnManager();
     var apply_options = function(default_options, options) {
