@@ -1,20 +1,20 @@
 var onYouTubePlayerAPIReady;
-var CDS = {};
+var cds = {};
 $(function(){
     // display dom
     var container = $('<div id="content" />').css('width', '100%');
-    container.append($('<div id="showcase" />').css('word-break', 'break-all').css('word-wrap', 'break-word'));
+    container.append($('<div id="showcase" />');
     container.append($('<div id="player" />'));
     $('body').append(container);
     $('body').append('<br clear="all">');
     $('body').append('<div id="comment" />');
     $('body').append('<div id="log" />');
     var log = function(message){ $('#log').text(message) };
-    CDS.user_id = $('#user_id').text();
-    CDS.host= $('#host').text();
+    cds.user_id = $('#user_id').text();
+    cds.host= $('#host').text();
     // socket
-    var socket = io.connect(CDS.host);
-    socket.emit('join', { type : 'display', id : CDS.user_id });
+    var socket = io.connect(cds.host);
+    socket.emit('join', { type : 'display', id : cds.user_id });
     socket.on('message', function(message){ log(message); });
     socket.on('join', function(message){
         var current_time = YouTube.player.getCurrentTime() / YouTube.player.getDuration();
@@ -83,7 +83,6 @@ $(function(){
             var title = video.title['$t'];
             var author = video.author[0].name['$t'];
             var thumbnail = video.media$group.media$thumbnail[1].url;
-            console.log(title, author, thumbnail);
             var tag = $('<div />').append('<p>'+title+'</p>').append('<p>'+author+'</p>');
             var img = $('<img />').attr('src', thumbnail).after('<br clear="all">');
             $('#showcase').html(tag.append(img));

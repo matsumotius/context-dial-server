@@ -27,6 +27,10 @@ app.get('/:user_id/controller', function(req, res){
         }
     });
 });
+app.post('/:user_id/change', function(req, res){
+    io.sockets.in('display-'+req.params.user_id).emit('change', req.body.msg); 
+    res.send('send<br>');
+});
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
 var reverse = function(type){ return type == 'display' ? 'controller' : 'display'; };
@@ -55,7 +59,6 @@ io.sockets.on('connection', function (socket){
         if('type' in message && (message.type == 'controller' || message.type == 'display')){
             socket.join(message.type+'-'+message.id);
             socket.set('name', message.type+'-'+message.id, function(){
-                socket.emit('message', 'success');
                 io.sockets.in(reverse(message.type)+'-'+message.id).emit('join');
             });
         }
