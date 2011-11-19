@@ -31,12 +31,13 @@ $(function(){
         cds.sync_time();
     });
     socket.on('change', function(message){
-        YouTube.change[message.key](message.value);
+        if(message.key in YouTube.change) YouTube.change[message.key](message.value);
     });
     socket.on('enter', function(message){
-        YouTube.enter[message.key](message.value);
+        if(message.key in YouTube.enter) YouTube.enter[message.key](message.value);
     });
     var YouTube = {};
+    YouTube.is_playing = false;
     YouTube.options = { width :600, height : 400, player_vars : { 'wmode' : 'transparent' } };
     YouTube.relation = {};
     YouTube.comments = {};
@@ -45,9 +46,10 @@ $(function(){
         YouTube.player = create_player('heXQfgEC3kk');
         YouTube.player.addEventListener('onReady', function(){
             YouTube.player.playVideo();
+            YouTube.is_playing = true;
             socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
         });
-        setInterval(function(){ cds.sync_time(); }, 1000);
+        setInterval(function(){ cds.sync_time(); }, 3000);
     };
     var create_player = function(video_id){
         YouTube.get_related(video_id);
@@ -105,6 +107,9 @@ $(function(){
             var video = videos[parseInt(value) % videos.length];
             var id = video.id['$t'].match(YouTube.id_exp)[1];
             change_video(id);
+        },
+        'root' : function(){
+            YouTube.is_playing ? YouTube.player.pauseVideo() : YouTube.player.playVideo();
         }
     };
 });
