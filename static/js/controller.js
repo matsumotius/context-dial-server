@@ -51,7 +51,7 @@ $(function(){
     });
     context_dial.on('touchend', function(context){
         if(cds.enter.indexOf(context.key) < 0) return;
-        socket.emit('enter', { to : cds.context, key : context.key, value : 1 });
+        socket.emit('enter', { to : cds.mode, key : context.key, value : 1 });
     });
     // dom
     $('body').append('<p><div id="log" /></p>');
