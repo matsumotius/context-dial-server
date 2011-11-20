@@ -39,7 +39,7 @@ io.sockets.on('connection', function (socket){
     // name schema : "#{type}-#{id}"
     socket.on('change', function(message){
         socket.get('name', function(error, name){
-            if(!error){
+            if(!error && name){
                 var type = message.to;
                 var id = name.split('-')[1];
                 io.sockets.in(type+'-'+id).emit('change', message);
@@ -48,7 +48,7 @@ io.sockets.on('connection', function (socket){
     });
     socket.on('replace', function(message){
         socket.get('name', function(error, name){
-            if(!error){
+            if(!error && name){
                 var type = message.to;
                 var id = name.split('-')[1];
                 io.sockets.in(type+'-'+id).emit('replace', message);
@@ -57,7 +57,7 @@ io.sockets.on('connection', function (socket){
     });
     socket.on('enter', function(message){
         socket.get('name', function(error, name){
-            if(!error){
+            if(!error && name){
                 var type = message.to;
                 var id = name.split('-')[1];
                 io.sockets.in(type+'-'+id).emit('enter', message);

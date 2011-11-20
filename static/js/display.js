@@ -2,8 +2,8 @@ var onYouTubePlayerAPIReady;
 var cds = {};
 $(function(){
     var container = $('<div id="content" />').css('width', '100%');
-    container.append($('<div id="showcase" />'));
-    container.append($('<div id="player" />'));
+    container.append($('<div id="player" />').css('width', '60%').css('float', 'left'));
+    container.append($('<div id="showcase" />').css('width', '40%').css('float', 'left'));
     $('body').append(container);
     $('body').append('<br clear="all">');
     $('body').append('<div id="comment" />');
@@ -60,6 +60,9 @@ $(function(){
             playerVars : YouTube.options.player_vars
         });
     };
+    window.teat = function(v){ 
+        YouTube.change.video(v);
+    };
     var change_video = function(video_id){
         YouTube.player = create_player(video_id);
         YouTube.player.addEventListener('onReady', function(){
@@ -95,8 +98,8 @@ $(function(){
             var title = video.title['$t'];
             var author = video.author[0].name['$t'];
             var thumbnail = video.media$group.media$thumbnail[1].url;
-            var tag = $('<div />').append('<p>'+title+'</p>').append('<p>'+author+'</p>');
-            var img = $('<img />').attr('src', thumbnail).after('<br clear="all">');
+            var tag = $('<div />').append('<p>'+title+'</p>').append('<p>投稿者:'+author+'</p>');
+            var img = $('<img />').css('width', '96%').attr('src', thumbnail).after('<br clear="all">');
             $('#showcase').html(tag.append(img));
         }
     };
