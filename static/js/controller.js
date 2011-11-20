@@ -47,7 +47,7 @@ $(function(){
     context_dial.set_image('link', { url : '/image/internet.png', width : 80, height : 80 });
     context_dial.set_image('scroll', { url : '/image/scroll.png', width : 80, height : 80 });
     context_dial.on('change', function(context){
-        socket.emit('change', { to : 'video', key : context.key, value : parseInt(context.value) });
+        socket.emit('change', { to : cds.mode, key : context.key, value : parseInt(context.value) });
     });
     context_dial.on('touchend', function(context){
         if(cds.enter.indexOf(context.key) < 0) return;
