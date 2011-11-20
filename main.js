@@ -28,38 +28,52 @@ app.get('/:user_id/controller', function(req, res){
     });
 });
 app.post('/:user_id/change', function(req, res){
-    io.sockets.in('display-'+req.params.user_id).emit('change', req.body.msg); 
+    io.sockets.in('display-'+req.params.user_id).emit('change', { key : 'link', value : 1 }); 
     res.send('send<br>');
 });
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
-var reverse = function(type){ return type == 'display' ? 'controller' : 'display'; };
+var socket_types = ['controller', 'video', 'extension'];
 var io = require('socket.io').listen(app);
 io.sockets.on('connection', function (socket){
     // name schema : "#{type}-#{id}"
     socket.on('change', function(message){
         socket.get('name', function(error, name){
             if(!error){
-                var type = name.split('-')[0];
+                var type = message.to;
                 var id = name.split('-')[1];
-                io.sockets.in(reverse(type)+'-'+id).emit('change', message);
+                io.sockets.in(type+'-'+id).emit('change', message);
+            }
+        });
+    });
+    socket.on('replace', function(message){
+        socket.get('name', function(error, name){
+            if(!error){
+                var type = message.to;
+                var id = name.split('-')[1];
+                io.sockets.in(type+'-'+id).emit('replace', message);
             }
         });
     });
     socket.on('enter', function(message){
         socket.get('name', function(error, name){
             if(!error){
-                var type = name.split('-')[0];
+                var type = message.to;
                 var id = name.split('-')[1];
-                io.sockets.in(reverse(type)+'-'+id).emit('enter', message);
+                io.sockets.in(type+'-'+id).emit('enter', message);
             }
         });
     });
     socket.on('join', function(message){
-        if('type' in message && (message.type == 'controller' || message.type == 'display')){
+        if('type' in message && socket_types.indexOf(message.type) > -1){
             socket.join(message.type+'-'+message.id);
             socket.set('name', message.type+'-'+message.id, function(){
-                io.sockets.in(reverse(message.type)+'-'+message.id).emit('join');
+                if(message.type == 'controller'){
+                    io.sockets.in('extension-'+message.id).emit('join');
+                    io.sockets.in('video-'+message.id).emit('join');
+                } else {
+                    io.sockets.in('controller-'+message.id).emit('join');
+                }
             });
         }
     });

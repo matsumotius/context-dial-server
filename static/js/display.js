@@ -1,7 +1,6 @@
 var onYouTubePlayerAPIReady;
 var cds = {};
 $(function(){
-    // display dom
     var container = $('<div id="content" />').css('width', '100%');
     container.append($('<div id="showcase" />'));
     container.append($('<div id="player" />'));
@@ -16,15 +15,15 @@ $(function(){
     cds.sync_time = function(){
         if(cds.youtube_is_ready == false) return;
         var current_time = YouTube.player.getCurrentTime() / YouTube.player.getDuration();
-        socket.emit('change', { key : 'time',  value : parseInt(current_time * 100) });
+        socket.emit('change', { to : 'controller', key : 'time',  value : parseInt(current_time * 100) });
     };
     cds.sync_sound = function(){
         if(cds.youtube_is_ready == false) return;
-        socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
+        socket.emit('change', { to : 'controller', key : 'sound', value : YouTube.player.getVolume() });
     };
     // socket
     var socket = io.connect(cds.host);
-    socket.emit('join', { type : 'display', id : cds.user_id });
+    socket.emit('join', { type : 'video', id : cds.user_id });
     socket.on('message', function(message){ log(message); });
     socket.on('join', function(message){
         cds.sync_sound();
@@ -47,7 +46,7 @@ $(function(){
         YouTube.player.addEventListener('onReady', function(){
             YouTube.player.playVideo();
             YouTube.is_playing = true;
-            socket.emit('change', { key : 'sound', value : YouTube.player.getVolume() });
+            socket.emit('change', { to : 'controller', key : 'sound', value : YouTube.player.getVolume() });
         });
         setInterval(function(){ cds.sync_time(); }, 3000);
     };
