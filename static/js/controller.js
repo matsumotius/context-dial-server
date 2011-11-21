@@ -15,11 +15,11 @@ $(function(){
         context_dial.set_value(message.key, message.value);
     });
     socket.on('replace', function(message){
-        console.log(message);
         if(message.value == 'video'){
             cds.mode = 'video';
             context_dial.remove('link');
             context_dial.remove('scroll');
+            context_dial.remove('history');
             context_dial.add('sound', { max : 100, min : 0, value_by_rot : 50, en : en_options });
             context_dial.add('time', { max : 100, min : 0, value_by_rot : 50, en : en_options });
             context_dial.add('video', { max : 100, min : 0, value_by_rot : 50, en : en_options });
@@ -42,8 +42,8 @@ $(function(){
     // context-dial
     $('#content').append('<canvas id="canvas" width="640" height="640" />');
     var en_options = { x : 0, y : 0, radius : 80, type : 'fill' };
-    var context_dial = $('#canvas').context_dial({ x : 320, y : 320, color : '#556b2f', radius : 320, type : 'fill' });
-    var en_options = { x : 0, y : 0, radius : 80, type : 'fill', color : '#bdb76b' };
+    var context_dial = $('#canvas').context_dial({ x : 320, y : 320, color : '#333333', radius : 320, type : 'fill' });
+    var en_options = { x : 0, y : 0, radius : 80, type : 'fill', color : '#ff8c00' };
     context_dial.add('link', { max : 9999, min : 0, value_by_rot : 50, en : en_options });
     context_dial.add('scroll', { max : 9999, min : 0, value_by_rot : 50, en : en_options });
     context_dial.add('history', { max : 100, min : -100, value_by_rot : 25, en : en_options });
