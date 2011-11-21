@@ -12,6 +12,7 @@ $(function(){
     cds.user_id = $('#user_id').text();
     cds.host= $('#host').text();
     cds.youtube_is_ready = false;
+    cds.context = { link : 0, scroll : 0, video : 0, time : 0, sound : 0 };
     cds.sync_time = function(){
         if(cds.youtube_is_ready == false) return;
         var current_time = YouTube.player.getCurrentTime() / YouTube.player.getDuration();
@@ -60,7 +61,7 @@ $(function(){
             playerVars : YouTube.options.player_vars
         });
     };
-    window.teat = function(v){ 
+    window.test = function(v){ 
         YouTube.change.video(v);
     };
     var change_video = function(video_id){
@@ -93,6 +94,7 @@ $(function(){
             $('#comment').text(comment.author[0].name['$t'] + ' : ' + comment.content['$t']);
         },
         'video' : function(value){
+            cds.context.video = parseInt(value);
             var videos = YouTube.relation.feed.entry;
             var video = videos[parseInt(value) % videos.length];
             var title = video.title['$t'];
@@ -106,7 +108,7 @@ $(function(){
     YouTube.enter = {
         'video' : function(value){
             var videos = YouTube.relation.feed.entry;
-            var video = videos[parseInt(value) % videos.length];
+            var video = videos[parseInt(cds.context.video) % videos.length];
             var id = video.id['$t'].match(YouTube.id_exp)[1];
             change_video(id);
         },
